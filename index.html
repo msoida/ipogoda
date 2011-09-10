@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+<html manifest="cache.manifest">
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<link href="css/style.css" rel="stylesheet" media="screen" type="text/css" />
+<script src="javascript/functions.js" type="text/javascript"></script>
+<title>Pogoda</title>
+<meta content="keyword1,keyword2,keyword3" name="keywords" />
+<meta content="Pogoda" name="description" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<link rel="apple-touch-icon" href="touch-icon-iphone.png" />
+<link rel="apple-touch-icon" sizes="72x72" href="touch-icon-ipad.png" />
+<link rel="apple-touch-icon" sizes="114x114" href="touch-icon-iphone4.png" />
+<link href="startup.png" rel="apple-touch-startup-image" />
+<style type="text/css">
+#komentarz
+{
+font-family: Palatino, Georgia, "Times New Roman", serif;
+background-color:#F7F7F7;
+text-align:justify;
+display:none;
+}
+.pogoda
+{
+display:block;
+}
+.um
+{
+display:block;
+}
+.coamps
+{
+display:none;
+}
+.komentarz
+{
+display:none;
+}
+</style>
+<script src="jquery.js"></script>
+<script type="text/javascript">
+var horizontal = false;
+function autostart()
+{
+	if(window.navigator.standalone == false)
+	{
+		document.getElementById("webapp").style.display = "none";
+		document.getElementById("nowebapp").style.display = "block";
+		document.getElementById("appicon").src = "touch-icon-iphone4.png";	
+	}
+	else
+	{
+		loadpicture("image.php?model=um","pogodaum");
+		loadpicture("image.php?model=coamps","pogodacoamps");
+		preparecomment("komentarz");
+	}
+}
+function loadpicture(file,image)
+{
+	document.getElementById(image).src = window.localStorage.getItem(image);
+	if(navigator.onLine)
+	{
+		var what;
+		what = "updatepicture(\"" + file + "\",\"" + image + "\")";
+		setTimeout(what,5000);
+	}
+}
+function updatepicture(file,image)
+{
+	var filehash,namehash;
+	filehash = file + "&hash";
+	namehash = image + "_hash";
+	jQuery.get(filehash, function(datahash) {
+	if(datahash != window.localStorage.getItem(namehash))
+	{
+		jQuery.get(file, function(data) {
+		window.localStorage.setItem(image, data);
+		document.getElementById(image).src = data;
+		} );
+	}
+	window.localStorage.setItem(namehash, datahash);
+	} );	
+}
+function preparecomment(where)
+{
+	document.getElementById(where).innerHTML = window.localStorage.getItem(where);
+	if(navigator.onLine)
+	{
+		var what;
+		what = "updatecomment(\"" + where + "\")";
+		setTimeout(what,5000);
+	}
+}
+function updatecomment(where)
+{
+	var filehash,namehash;
+	filehash = "komentarz.php?hash";
+	namehash = where + "_hash";
+	jQuery.get(filehash, function(datahash) {
+	if(datahash != window.localStorage.getItem(namehash))
+	{
+		jQuery.get("komentarz.php", function(data) {
+		window.localStorage.setItem(where, data);
+		document.getElementById(where).innerHTML = data;
+		} );
+	}
+	window.localStorage.setItem(namehash, datahash);
+	} );	
+}
+function changeTitle(tresc)
+{
+	if(horizontal)
+	{
+		$('#title').fadeOut('fast', function() {
+		$('#title').html(tresc);
+		$('#title').fadeIn('fast');
+  		});
+	}
+	else $('#title').html(tresc);
+}
+function updateOrientation()
+{
+	switch(window.orientation)
+	{
+		case 0:
+		$('#title').fadeOut('fast');
+		horizontal = false;
+		break;
+		case -90:
+		$('#title').fadeIn('fast');
+		horizontal = true;
+		break;
+		case 90:
+		$('#title').fadeIn('fast');
+		horizontal = true;
+		break;
+		case 180:
+		$('#title').fadeOut('fast');
+		horizontal = false;
+		break;
+	}
+}
+function go_komentarz()
+{
+	$(".pogoda").slideUp('fast', function() {
+	$(".um").slideUp('slow');
+	$(".coamps").slideUp('slow');
+	$(".komentarz").slideDown('slow');
+	changeTitle("Komentarz Synoptyka");
+	});
+}
+function powrot()
+{
+	$(".komentarz").slideUp('slow');
+	changeTitle("UM");
+	$(".um").slideDown('slow', function() {
+	$(".pogoda").slideDown('fast');
+	});
+}
+function go_coamps()
+{
+	$(".um").slideUp('slow');
+	$(".coamps").slideDown('slow');
+	changeTitle("COAMPS");
+}
+function go_um()
+{
+	$(".um").slideDown('slow');
+	$(".coamps").slideUp('slow');
+	changeTitle("UM");
+}
+</script>
+</head>
+<body onorientationchange="updateOrientation();">
+<div id="webapp"  style="display:block">
+<div id="topbar" class="transparent">
+<div id="title" style="display:none">
+<div class="um">UM</div>
+<div class="coamps">COAMPS</div>
+<div class="komentarz">Komentarz Synoptyka</div>
+</div> 
+<div id="leftnav">
+<a class="komentarz" onclick="powrot()" style="display:none">
+<img alt="Powrót" src="images/home.png" /></a>
+</div>
+
+<!--<div class="pogoda" id="blueleftbutton">
+<a>GPS</a>
+</div>-->
+
+<div class="pogoda" id="rightnav">
+<a onclick="go_komentarz()">Komentarz</a>
+<a>
+<div class="um" onclick="go_coamps()">COAMPS</div>
+<div class="coamps" onclick="go_um()" style="display:none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+</a>
+</div>
+</div>
+<div id="content">
+<div class="um"><img id="pogodaum" src="0.gif"></div>
+<div class="coamps"><img id="pogodacoamps" src="0.gif"></div>
+<div id="komentarz" class="komentarz">Komentarz synoptyka w trakcie ładowania...</div>
+</div>
+</div>
+<!--  Running on iPhone not as WebApp   -->
+<div id="nowebapp" style="display:none">
+<div id="topbar">
+<div id="title">
+Prognoza pogody ICM
+</div> 
+</div>
+<div id="content">
+<div style="text-align: center;">
+Aby zainstalować aplikację:<br>
+1. Naciśnij znak +<br>
+2. Wybierz "Dodaj jako ikonę"
+</div>
+<img id="appicon" src="0.gif" style="display: block; margin-left: auto; margin-right: auto;">
+</div>
+</div>
+<div id="footer">
+</div>
+<script type="text/javascript">
+window.onload=autostart();
+</script>
+</body>
+</html>
