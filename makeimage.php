@@ -32,7 +32,7 @@ $obrazek = imagecreatetruecolor($origw, $origh);
 imagecopyresized($obrazek, $obr_orig, 0, 0, 0, 0, $origw, $origh, $origw, $origh);
 }
 
-imagetruecolortopalette($obrazek,0,256);
+//imagetruecolortopalette($obrazek,0,256);
 
 //imagecolorset($obrazek, imagecolorclosest($obrazek,211,233,251), 255, 255, 255);
 //imagecolorset($obrazek, imagecolorclosest($obrazek,249,233,230), 255, 255, 255);
@@ -45,18 +45,18 @@ imagetruecolortopalette($obrazek,0,256);
 //imagecolorset($obrazek, imagecolorexact($obrazek,248,235,229), 255, 255, 255);
 
 
-imagepalettetotruecolor($obrazek);
-function imagepalettetotruecolor(&$img)
-    {
-        if (!imageistruecolor($img))
-        {
-            $w = imagesx($img);
-            $h = imagesy($img);
-            $img1 = imagecreatetruecolor($w,$h);
-            imagecopy($img1,$img,0,0,0,0,$w,$h);
-            $img = $img1;
-        }
-    }
+//imagepalettetotruecolor($obrazek);
+//function imagepalettetotruecolor(&$img)
+//    {
+//        if (!imageistruecolor($img))
+//        {
+//            $w = imagesx($img);
+//            $h = imagesy($img);
+//            $img1 = imagecreatetruecolor($w,$h);
+//            imagecopy($img1,$img,0,0,0,0,$w,$h);
+//            $img = $img1;
+//        }
+//    }
 
 
 //imagecolortransparent($obrazek, imagecolorallocate($obrazek,255,255,255));
