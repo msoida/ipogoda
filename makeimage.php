@@ -1,6 +1,6 @@
 <?php
 //            COPYRIGHT BY
-//                   MICHAŁ SOIDA, 2010
+//                   MICHAŁ SOIDA, 2011
 //     Creative Commons Uznanie autorstwa -
 //     - Użycie niekomercyjne - Na tych samych warunkach 3.0 Polska
 // http://creativecommons.org/licenses/by-nc-sa/3.0/pl/legalcode
@@ -20,8 +20,8 @@ exit("ERROR: Trying to change coordinates. Not possible in this version.");
 }
 else
 {
-if ($model == "coamps") $filename = "http://new.meteo.pl/metco/mgram_pict.php?ntype=2n&row=151&col=91&lang=pl";
-else $filename = "http://new.meteo.pl/um/metco/mgram_pict.php?ntype=0u&row=466&col=232&lang=pl";
+if ($model == "coamps") $filename = "http://new.meteo.pl/metco/mgram_pict.php?ntype=2n&lang=pl&row=151&col=91";
+else $filename = "http://new.meteo.pl/um/metco/mgram_pict.php?ntype=0u&lang=pl&row=466&col=232";
 }
 
 //pobieranie obrazka
