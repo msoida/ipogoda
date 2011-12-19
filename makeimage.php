@@ -13,17 +13,38 @@ if(array_key_exists("long",$_REQUEST)) $long = $_REQUEST["long"];
 else $long = 0;
 
 
+function showerror($errortext)
+{
+header ("Content-type: image/png");
+$string = $errortext;
+$font   = 4;
+$width  = ImageFontWidth($font) * strlen($string);
+$height = ImageFontHeight($font);
+ 
+$im = @imagecreate ($width,$height);
+$background_color = imagecolorallocate ($im, 255, 255, 255); //white background
+$text_color = imagecolorallocate ($im, 0, 0,0);//black text
+imagestring ($im, $font, 0, 0,  $string, $text_color);
+imagepng ($im);
+}
+
+
 //przygotowywanie adresu
 if ($lat!=0 || $long!=0)
 {
-exit("ERROR: Trying to change coordinates. Not possible in this version.");
+if ($model == "coamps") $gps = "http://www.meteo.pl/php/mgram_search.php?NALL=" . $lat . "&EALL=" . $long;
+else $gps = "http://www.meteo.pl/um/php/mgram_search.php?NALL=" . $lat . "&EALL=" . $long;
+	$headers = get_headers($gps, 1);
+    if($headers[0] != "HTTP/1.1 301 Moved Permanently") showerror("Blad: Pozycja poza zasiegiem mapy");
+    else $temp_q = parse_url($headers['location']);
+if ($model == "coamps") $filename = "http://www.meteo.pl/metco/mgram_pict.php?" . $temp_q['query'];
+else $filename = "http://www.meteo.pl/um/metco/mgram_pict.php?" . $temp_q['query'];
 }
 else
 {
-if ($model == "coamps") $filename = "http://www.meteo.pl/metco/mgram_pict.php?ntype=2n&lang=pl&row=151&col=91";
-else $filename = "http://www.meteo.pl/um/metco/mgram_pict.php?ntype=0u&lang=pl&row=466&col=232";
+if ($model == "coamps") $filename = "http://www.meteo.pl/metco/mgram_pict.php?ntype=2n&row=151&col=91&lang=pl";
+else $filename = "http://www.meteo.pl/um/metco/mgram_pict.php?ntype=0u&row=466&col=232&lang=pl";
 }
-
 //pobieranie obrazka
 $obr_orig = imagecreatefrompng($filename);
 $size = getimagesize($filename);
